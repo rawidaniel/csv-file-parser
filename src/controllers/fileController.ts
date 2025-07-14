@@ -5,7 +5,7 @@ import path from "path";
 import { processAndAggregateCsv } from "../services/csvService";
 import { v4 as uuidv4 } from "uuid";
 import AppError from "../utils/appError";
-import csvQueue from "../queue/csvQueue";
+import { csvQueue } from "../queue/csvQueue";
 
 // Set up multer storage (in-memory for streaming) and filter for CSV files only
 const upload = multer({
@@ -34,8 +34,8 @@ export const uploadCsvFile = catchAsync(
     const outputFileName = `${uuidv4()}.csv`;
     const outputPath = path.join(__dirname, "../../output", outputFileName);
 
-    // Enqueue a job to process the CSV in the background
-    const job = await csvQueue.add({
+    // Enqueue a job to process the CSV in the background (BullMQ)
+    const job = await csvQueue.add('process', {
       inputBuffer: req.file.buffer,
       outputPath,
     });
