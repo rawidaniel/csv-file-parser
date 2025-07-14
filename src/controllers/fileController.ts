@@ -5,6 +5,7 @@ import path from "path";
 import { processAndAggregateCsv } from "../services/csvService";
 import { v4 as uuidv4 } from "uuid";
 import AppError from "../utils/appError";
+import csvQueue from "../queue/csvQueue";
 
 // Set up multer storage (in-memory for streaming) and filter for CSV files only
 const upload = multer({
@@ -33,16 +34,18 @@ export const uploadCsvFile = catchAsync(
     const outputFileName = `${uuidv4()}.csv`;
     const outputPath = path.join(__dirname, "../../output", outputFileName);
 
-    // Process and aggregate the CSV file, get metrics
-    const { processingTimeMs, departmentCount } = await processAndAggregateCsv(req.file.buffer, outputPath);
+    // Enqueue a job to process the CSV in the background
+    const job = await csvQueue.add({
+      inputBuffer: req.file.buffer,
+      outputPath,
+    });
 
-    // Construct download link (assuming static serving from /output)
-    const downloadLink = `/output/${outputFileName}`;
-    res.status(200).json({
-      message: "CSV file processed successfully",
-      downloadLink,
-      processingTimeMs,
-      departmentCount,
+    // Respond with job ID and status endpoint
+    res.status(202).json({
+      message: "CSV file processing started in background",
+      jobId: job.id,
+      statusUrl: `/api/file/status/${job.id}`,
+      downloadLink: `/output/${outputFileName}`,
     });
   }
 );
