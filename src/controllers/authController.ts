@@ -97,7 +97,7 @@ export const userLogin = catchAsync(
 
     const accessToken = generateAccessToken({ id: user.id });
     const sanitizedUser = removeSensitiveFields(user);
-    res.json({ accessToken, user: sanitizedUser });
+    res.status(200).json({ accessToken, user: sanitizedUser });
   }
 );
 
