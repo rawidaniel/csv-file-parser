@@ -102,47 +102,44 @@ export const userLogin = catchAsync(
 );
 
 // ========== PROTECT MIDDLEWARE ==========
-// export const protect = async (req: any, res: Response, next: NextFunction) => {
-//   try {
-//     let token;
-//     if (
-//       req.headers.authorization &&
-//       req.headers.authorization.startsWith('Bearer')
-//     ) {
-//       token = req.headers.authorization.split(' ')[1];
-//     }
+export const protect = catchAsync(
+  async (req: any, res: Response, next: NextFunction) => {
+    let token;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
 
-//     if (!token) {
-//       return next(
-//         new Error('You are not logged in. Please log in to get access.'),
-//       );
-//     }
+    if (!token) {
+      return next(
+        new AppError("You are not logged in. Please log in to get access.", 403)
+      );
+    }
 
-//     const decoded = await verifyToken(token);
-//     const user = await prisma.admin.findUnique({ where: { id: decoded.id } });
+    const decoded = await verifyToken(token);
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
 
-//     if (!user) {
-//       return next(
-//         new Error('The user belonging to this token does no longer exist.'),
-//       );
-//     }
+    if (!user) {
+      return next(
+        new AppError(
+          "The user belonging to this token does no longer exist.",
+          403
+        )
+      );
+    }
 
-//     // if (user.passwordChangedAt && decoded.iat < user.passwordChangedAt.getTime() / 1000) {
-//     //   return next(new Error('User recently changed password. Please login again.'));
-//     // }
+    req.user = user;
+    next();
+  }
+);
 
-//     req.user = user;
-//     next();
-//   } catch (err) {
-//     next(err);
-//   }
-// };
-
-// const verifyToken = (token: string): Promise<any> => {
-//   return new Promise((resolve, reject) => {
-//     jwt.verify(token, JWT_SECRET, (err, decoded) => {
-//       if (err) return reject(err);
-//       resolve(decoded);
-//     });
-//   });
-// };
+const verifyToken = (token: string): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+      if (err) return reject(err);
+      resolve(decoded);
+    });
+  });
+};
