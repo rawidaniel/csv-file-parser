@@ -125,7 +125,7 @@ project-root/
 ├── output/                         # Output CSV files (downloadable)
 ├── docker-compose.yml              # Redis and Postgres services for BullMQ and database
 ├── tsconfig.json                   # TypeScript config
-└── README.md                       # This file
+└── README.md
 ```
 
 ---
