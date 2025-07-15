@@ -1,6 +1,7 @@
 # compiled output
 /node_modules
 /output
+/dist
 
 # dotenv environment variable files
 *.env

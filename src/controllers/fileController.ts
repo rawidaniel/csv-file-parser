@@ -35,7 +35,7 @@ export const uploadCsvFile = catchAsync(
     const outputPath = path.join(__dirname, "../../output", outputFileName);
 
     // Enqueue a job to process the CSV in the background (BullMQ)
-    const job = await csvQueue.add('process', {
+    const job = await csvQueue.add("process", {
       inputBuffer: req.file.buffer,
       outputPath,
     });
