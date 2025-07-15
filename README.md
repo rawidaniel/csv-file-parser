@@ -14,7 +14,27 @@
 npm install
 ```
 
-### 2. Start Redis and Postgres (using Docker Compose)
+### 2. Create a .env File
+
+- Copy the example environment file:
+  ```bash
+  cp .env.example .env
+  ```
+- Edit `.env` to set your credentials and configuration as needed.
+
+### 3. Set Up the Database with Prisma
+
+- Generate the Prisma client:
+  ```bash
+  npx prisma generate
+  ```
+- Run database migrations:
+  ```bash
+  npx prisma migrate dev
+  ```
+  This will apply all migration files to your Postgres database.
+
+### 4. Start Redis and Postgres (using Docker Compose)
 
 ```bash
 docker-compose up -d
@@ -28,19 +48,7 @@ docker-compose up -d
   - Password: `postgres`
   - Database: `csv_file_parser`
 
-### 3. Set Up the Database with Prisma
-
-- Run database migrations:
-  ```bash
-  npx prisma migrate dev
-  ```
-- Generate the Prisma client:
-  ```bash
-  npx prisma generate
-  ```
-  This will apply all migration files to your Postgres database.
-
-### 4. Start the API Server (Development)
+### 5. Start the API Server (Development)
 
 ```bash
 npx nodemon src/server.ts
@@ -52,7 +60,7 @@ Or, if you have the script in your `package.json`:
 npm run dev
 ```
 
-### 5. Start the Worker (Development, in a separate terminal)
+### 6. Start the Worker (Development, in a separate terminal)
 
 ```bash
 npx nodemon src/worker/csvWorker.ts
@@ -64,7 +72,7 @@ Or, if you have the script:
 npm run worker:dev
 ```
 
-### 6. Register or Log In to Get a Token
+### 7. Register or Log In to Get a Token
 
 Before uploading a CSV file, you must register or log in to obtain an authentication token:
 
@@ -73,13 +81,13 @@ Before uploading a CSV file, you must register or log in to obtain an authentica
 
 Include the received token as a Bearer token in the Authorization header for subsequent requests.
 
-### 7. Upload a CSV File
+### 8. Upload a CSV File
 
 - Send a `POST` request to `/api/file/upload` with a CSV file (field name: `file`).
 - **Reminder:** Include your authentication token as a Bearer token in the `Authorization` header.
 - The response will include a `jobId`, `statusUrl`, and `downloadLink`.
 
-### 8. Poll for Job Status
+### 9. Poll for Job Status
 
 - Use `GET /api/file/status/:jobId` to check if the job is completed.
 - **Reminder:** Include your authentication token as a Bearer token in the `Authorization` header.
@@ -121,6 +129,7 @@ project-root/
 │   │   └── jobStatusController.ts  # Handles job status queries
 │   ├── middlewares/
 │   │  ├──  errorHandler.ts         # Catches and processes application errors
+│   │   └── catchAsync.ts           # Async error wrapper
 │   ├── services/
 │   │   └── csvService.ts           # Streaming CSV aggregation logic
 │   ├── queue/
