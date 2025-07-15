@@ -7,6 +7,6 @@ const router = Router();
 
 // File Routes
 router.post("/upload", protect, uploadCsvMulter, uploadCsvFile);
-router.get("/status/:jobId", getCsvJobStatus);
+router.get("/status/:jobId", protect, getCsvJobStatus);
 
 export default router;
