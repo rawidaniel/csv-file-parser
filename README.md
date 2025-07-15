@@ -52,14 +52,25 @@ Or, if you have the script:
 npm run worker:dev
 ```
 
-### 5. Upload a CSV File
+### 5. Register or Log In to Get a Token
+
+Before uploading a CSV file, you must register or log in to obtain an authentication token:
+
+- Register: `POST /api/auth/signup`
+- Log in: `POST /api/auth/login`
+
+Include the received token as a Bearer token in the Authorization header for subsequent requests.
+
+### 6. Upload a CSV File
 
 - Send a `POST` request to `/api/file/upload` with a CSV file (field name: `file`).
+- **Reminder:** Include your authentication token as a Bearer token in the `Authorization` header.
 - The response will include a `jobId`, `statusUrl`, and `downloadLink`.
 
-### 6. Poll for Job Status
+### 7. Poll for Job Status
 
 - Use `GET /api/file/status/:jobId` to check if the job is completed.
+- **Reminder:** Include your authentication token as a Bearer token in the `Authorization` header.
 - When `state` is `completed`, the file is ready for download at the `downloadLink`.
 
 ---
