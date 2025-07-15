@@ -3,8 +3,12 @@ import path from "path";
 import authRoutes from "./routes/authRoute";
 import fileRoutes from "./routes/fileRoute";
 import globalErrorHandler from "./controllers/errorController";
+import cors from "cors";
 
 const app = express();
+
+// Enable CORS for all routes
+app.use(cors());
 
 app.use(express.json());
 
